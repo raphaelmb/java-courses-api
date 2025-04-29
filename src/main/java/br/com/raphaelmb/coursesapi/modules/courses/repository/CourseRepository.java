@@ -6,4 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import br.com.raphaelmb.coursesapi.modules.courses.entity.CourseEntity;
 
-public interface CourseRepository extends JpaRepository<CourseEntity, UUID>{}
+public interface CourseRepository extends JpaRepository<CourseEntity, UUID> {}
