@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClient.ResponseSpec;
 
 import br.com.raphaelmb.coursesapi.modules.courses.dto.CourseCreateRequestDTO;
 import br.com.raphaelmb.coursesapi.modules.courses.dto.CourseCreateResponseDTO;
 import br.com.raphaelmb.coursesapi.modules.courses.dto.CourseUpdateDTO;
 import br.com.raphaelmb.coursesapi.modules.courses.usecases.CreateCourseUseCase;
+import br.com.raphaelmb.coursesapi.modules.courses.usecases.DeleteCourseUseCase;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
@@ -25,6 +27,9 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 public class CourseController {
     @Autowired
     private CreateCourseUseCase createCourseUseCase;
+
+    @Autowired
+    private DeleteCourseUseCase deleteCourseUseCase;
     
     @GetMapping("/")
     public String listCourses() {
@@ -50,8 +55,10 @@ public class CourseController {
     }
     
     @DeleteMapping("/{id}")
-    public String deleteCourse(@PathVariable UUID id) {
-        return "Course deleted";
+    public ResponseEntity<Object> deleteCourse(@PathVariable UUID id) {
+        this.deleteCourseUseCase.execute(id);
+
+        return ResponseEntity.status(200).build();
     }   
 
     @PatchMapping("/{id}/active")
