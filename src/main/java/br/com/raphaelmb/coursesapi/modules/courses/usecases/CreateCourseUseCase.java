@@ -20,4 +20,5 @@ public class CreateCourseUseCase {
 
         return courseRepository.save(course);
     }
+
 }

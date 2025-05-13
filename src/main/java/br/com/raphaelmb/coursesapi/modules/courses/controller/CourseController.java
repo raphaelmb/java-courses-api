@@ -1,9 +1,9 @@
 package br.com.raphaelmb.coursesapi.modules.courses.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClient.ResponseSpec;
 
 import br.com.raphaelmb.coursesapi.modules.courses.dto.CourseCreateRequestDTO;
 import br.com.raphaelmb.coursesapi.modules.courses.dto.CourseCreateResponseDTO;
 import br.com.raphaelmb.coursesapi.modules.courses.dto.CourseUpdateDTO;
+import br.com.raphaelmb.coursesapi.modules.courses.entity.CourseEntity;
 import br.com.raphaelmb.coursesapi.modules.courses.usecases.CreateCourseUseCase;
 import br.com.raphaelmb.coursesapi.modules.courses.usecases.DeleteCourseUseCase;
+import br.com.raphaelmb.coursesapi.modules.courses.usecases.GetAllCoursesUseCase;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
@@ -29,16 +30,21 @@ public class CourseController {
     private CreateCourseUseCase createCourseUseCase;
 
     @Autowired
+    private GetAllCoursesUseCase getAllCoursesUseCase;
+
+    @Autowired
     private DeleteCourseUseCase deleteCourseUseCase;
     
     @GetMapping("/")
-    public String listCourses() {
-        return "List of courses";
+    public ResponseEntity<List<CourseEntity>> listCourses() {
+        var courses = this.getAllCoursesUseCase.execute();
+
+        return ResponseEntity.ok().body(courses);
     }
 
     @PostMapping("/")
-    public ResponseEntity<CourseCreateResponseDTO> createCourse(@RequestBody CourseCreateRequestDTO courseCreateDTO) {
-        var course = this.createCourseUseCase.execute(courseCreateDTO);
+    public ResponseEntity<CourseCreateResponseDTO> createCourse(@RequestBody CourseCreateRequestDTO courseCreateRequestDTO) {
+        var course = this.createCourseUseCase.execute(courseCreateRequestDTO);
 
         var createdCourseDTO = CourseCreateResponseDTO.builder()
             .category(course.getCategory())
@@ -65,5 +71,4 @@ public class CourseController {
     public String updateCourseActive(@PathVariable UUID id, @RequestBody boolean active) {
         return "Course active updated";
     }
-    
 }
